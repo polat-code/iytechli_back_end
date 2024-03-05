@@ -1,0 +1,19 @@
+
+application:
+  security:
+    jwt:
+      secret_key : 5a53e4f8371c05042b391547b7ad0b0c8a081040b4c72796e3e3238af50090e934d6aa9adaa7e3a9cc68b82dafcafe13f781c6459d3dc2c4d4e59b738009109a
+      expiration : 604800000 # 7 days
+      refresh_token:
+        expiration : 2419200000 # 30 days
+
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      username: admin
+      password: password
+      database: iytechli
+      port: 27017
+      host: localhost
+
