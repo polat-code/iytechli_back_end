@@ -34,6 +34,11 @@ public class User implements UserDetails {
     private Date updatedAt;
     private boolean isAbleToSentPost;
 
+    private String otp;
+    private Date otpExpiredDate;
+
+
+
     private Role role = Role.USER;
 
     @Override

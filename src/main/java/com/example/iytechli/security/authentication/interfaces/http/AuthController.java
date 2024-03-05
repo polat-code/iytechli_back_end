@@ -1,17 +1,11 @@
 package com.example.iytechli.security.authentication.interfaces.http;
 
 import com.example.iytechli.security.authentication.application.AuthService;
-import com.example.iytechli.security.authentication.domain.model.http.AuthenticationRequest;
-import com.example.iytechli.security.authentication.domain.model.http.AuthenticationResponse;
-import com.example.iytechli.security.authentication.domain.model.http.RegisterResponse;
-import com.example.iytechli.security.authentication.domain.model.http.RegisterRequest;
+import com.example.iytechli.security.authentication.domain.model.http.*;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -28,5 +22,10 @@ public class AuthController {
    @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
        return authService.authenticate(authenticationRequest);
+   }
+
+   @GetMapping("/verify-otp")
+    public ResponseEntity<OtpVerificationResponse> verifyOTP(@RequestBody OtpVerificationRequest otpVerificationRequest) throws Exception{
+       return authService.verifyOTP(otpVerificationRequest);
    }
 }

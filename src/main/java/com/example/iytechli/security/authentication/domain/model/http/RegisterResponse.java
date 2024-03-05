@@ -7,6 +7,5 @@ import lombok.*;
 @Data
 public class RegisterResponse {
 
-    @NonNull
-    private String token;
+    private String message;
 }

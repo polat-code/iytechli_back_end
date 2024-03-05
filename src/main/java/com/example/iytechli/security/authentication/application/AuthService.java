@@ -2,13 +2,13 @@ package com.example.iytechli.security.authentication.application;
 
 import com.example.iytechli.security.authentication.domain.exceptions.AlreadyRegisteredUser;
 import com.example.iytechli.security.authentication.domain.exceptions.EmailNotValidException;
-import com.example.iytechli.security.authentication.domain.model.http.AuthenticationRequest;
-import com.example.iytechli.security.authentication.domain.model.http.AuthenticationResponse;
-import com.example.iytechli.security.authentication.domain.model.http.RegisterResponse;
-import com.example.iytechli.security.authentication.domain.model.http.RegisterRequest;
+import com.example.iytechli.security.authentication.domain.exceptions.OtpExpirationException;
+import com.example.iytechli.security.authentication.domain.model.http.*;
 import com.example.iytechli.user.domain.entity.User;
 import com.example.iytechli.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,6 +28,11 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final AuthEmailService  authEmailService;
+
+    @Value("${application.otp.otpExpiration}")
+    private  long otpExpirationMilliSeconds;
+
     public ResponseEntity<RegisterResponse> register(RegisterRequest registerRequest) throws Exception{
         //  Check email is iyte email or not.
         String email = registerRequest.getEmail();
@@ -38,6 +43,7 @@ public class AuthService {
         if(optionalUser.isPresent()) {
             throw new AlreadyRegisteredUser("Already Registered Email!");
         }
+
 
         User user = User.builder()
                 .name(registerRequest.getName())
@@ -50,12 +56,22 @@ public class AuthService {
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .build();
 
+        String otp = RandomStringUtils.randomNumeric(6);
+        user.setOtp(passwordEncoder.encode(otp));
+
+        Date otpExpiredDate = new Date(System.currentTimeMillis() + otpExpirationMilliSeconds);
+        user.setOtpExpiredDate(otpExpiredDate);
+
+        // send an email
+        authEmailService.sendAuthEmail(otp,user.getName(), user.getSurname(), user.getEmail());
+
         userRepository.save(user);
 
-        String jwtToken = jwtService.generateToken(user);
+        // Send jwt token in otp verification.
+        // String jwtToken = jwtService.generateToken(user);
 
         RegisterResponse registerResponse =  RegisterResponse.builder()
-                .token(jwtToken)
+                .message("verification code is sent to your email address")
                 .build();
 
         return new ResponseEntity<>(registerResponse, HttpStatus.OK);
@@ -82,6 +98,8 @@ public class AuthService {
                     )
 
             );
+
+
             Optional<User> user = userRepository.findByAlreadyEmail(authenticationRequest.getEmail());
             if(user.isEmpty()) {
                 throw new UsernameNotFoundException("There is no such a user");
@@ -97,5 +115,31 @@ public class AuthService {
         }catch (Exception e) {
             throw new UsernameNotFoundException("There is no such a user");
         }
+    }
+
+    public ResponseEntity<OtpVerificationResponse> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    otpVerificationRequest.getEmail(),
+                    otpVerificationRequest.getPassword()
+            ));
+            Optional<User> optionalUser = userRepository.findByAlreadyEmail(otpVerificationRequest.getEmail());
+            if(optionalUser.isEmpty()) {
+                throw new UsernameNotFoundException("There is no such a email");
+            }
+            User user = optionalUser.get();
+            var jwtToken = jwtService.generateToken(user);
+            if(user.getOtpExpiredDate().before(new Date(System.currentTimeMillis()))) {
+                throw new OtpExpirationException();
+            }
+
+            user.setOtp(null);
+            user.setOtpExpiredDate(null);
+            userRepository.save(user);
+
+            OtpVerificationResponse otpVerificationResponse = OtpVerificationResponse.builder()
+                    .token(jwtToken)
+                    .build();
+
+            return new ResponseEntity<>(otpVerificationResponse,HttpStatus.OK);
     }
 }

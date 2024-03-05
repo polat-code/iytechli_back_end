@@ -6,6 +6,8 @@ application:
       expiration : 604800000 # 7 days
       refresh_token:
         expiration : 2419200000 # 30 days
+  otp:
+    otpExpiration: 86400000 # 1 days
 
 spring:
   data:
@@ -16,4 +18,25 @@ spring:
       database: iytechli
       port: 27017
       host: localhost
+
+
+
+  mail:
+    default-encoding: UTF-8
+    host: smtp.gmail.com
+    username: ozgurhan.45@gmail.com
+    password: "xxvn wmcp lmfm nqmj"
+    port: 587
+    protocol: smtp
+    test-connection: false
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: false
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
