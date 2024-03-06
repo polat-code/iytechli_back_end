@@ -1,5 +1,6 @@
 package com.example.iytechli.security.authentication.application;
 
+import com.example.iytechli.message.application.MessagesService;
 import com.example.iytechli.security.authentication.domain.exceptions.*;
 import com.example.iytechli.security.authentication.domain.model.http.*;
 import com.example.iytechli.user.domain.entity.User;
@@ -27,6 +28,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final AuthEmailService  authEmailService;
+    private final MessagesService messagesService;
 
     @Value("${application.otp.otpExpiration}")
     private  long otpExpirationMilliSeconds;
@@ -110,7 +112,7 @@ public class AuthService {
 
             User user = optionalUser.get();
 
-            // TODO Check that user approve its email or not .
+            // Check that user approve its email or not .
             if(!(user.getOtp() == null)){
                 sendOTP(user);
                 throw new OtpNotApprovedException("OTP is not approved. New OTP is sent to email");
@@ -124,7 +126,6 @@ public class AuthService {
             return new ResponseEntity<>(authenticationResponse,HttpStatus.OK);
     }
 
-    // TODO Generate OTP and send an email.
 
     public ResponseEntity<OtpVerificationResponse> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
         // Check whether email is valid
@@ -143,7 +144,7 @@ public class AuthService {
 
             User user = optionalUser.get();
 
-            // TODO Verify OTP
+            // Verify OTP
             String requestOTP = otpVerificationRequest.getOtp();
             if(!requestOTP.equals(user.getOtp())) {
                 throw new OtpNotValidException("OTP is invalid");
@@ -157,7 +158,10 @@ public class AuthService {
 
             var jwtToken = jwtService.generateToken(user);
 
-            userRepository.save(user);
+            user = userRepository.save(user);
+
+            // TODO Create a Messages document for each user
+            messagesService.initializeUserMessages(user);
 
             OtpVerificationResponse otpVerificationResponse = OtpVerificationResponse.builder()
                     .token(jwtToken)
