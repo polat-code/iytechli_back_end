@@ -24,8 +24,8 @@ public class SecurityFilterChainConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private static final String[] WHITE_LIST_URL = {
-            "/api/v1/auth/register/**",
-            "/api/v1/auth/authenticate/**"
+            "/api/v1/auth/**"
+
     };
 
     @Bean

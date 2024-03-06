@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class AuthEmailService {
 
     private final EmailService emailService;
-    public void sendAuthEmail(String otp, String name,String surname,String to) {
+    public void sendAuthEmail(String otp, String name,String surname,String to) throws Exception {
         emailService.sendEmail("Iytechli Email Onaylama",
                 "Merhaba, " + name + " " + surname + "\nEmailini onaylamak için bu kodu kullanabilirsin: "
                         + otp +"\n \nUnutma bu kod sadece 24 saat geçerlidir." , to );

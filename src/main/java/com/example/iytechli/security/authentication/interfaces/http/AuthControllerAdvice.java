@@ -1,9 +1,11 @@
 package com.example.iytechli.security.authentication.interfaces.http;
 
 import com.example.iytechli.common.domain.entity.ErrorModel;
+import com.example.iytechli.common.exception.EmailCannotSentException;
 import com.example.iytechli.security.authentication.domain.exceptions.AlreadyRegisteredUser;
 import com.example.iytechli.security.authentication.domain.exceptions.EmailNotValidException;
 import com.example.iytechli.security.authentication.domain.exceptions.OtpExpirationException;
+import com.example.iytechli.security.authentication.domain.model.http.OtpNotValidException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,5 +34,14 @@ public class AuthControllerAdvice {
     public ResponseEntity<ErrorModel> usernameNotFoundException(UsernameNotFoundException ex, WebRequest webRequest){
         return new ResponseEntity<>(new ErrorModel(ex.getMessage(),HttpStatus.NOT_FOUND.value()), HttpStatus.NOT_ACCEPTABLE);
     }
+    @ExceptionHandler(EmailCannotSentException.class)
+    public ResponseEntity<ErrorModel> emailCannotSentException(EmailCannotSentException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ErrorModel(ex.getMessage(),HttpStatus.NOT_ACCEPTABLE.value()), HttpStatus.NOT_ACCEPTABLE);
+    }
+    @ExceptionHandler(OtpNotValidException.class)
+    public ResponseEntity<ErrorModel> otpNotValidException(OtpNotValidException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ErrorModel(ex.getMessage(),HttpStatus.NOT_ACCEPTABLE.value()), HttpStatus.NOT_ACCEPTABLE);
+    }
+
 
 }

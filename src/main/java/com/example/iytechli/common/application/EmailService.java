@@ -1,9 +1,8 @@
 package com.example.iytechli.common.application;
 
 
-import com.example.iytechli.security.authentication.domain.exceptions.EmailNotValidException;
+import com.example.iytechli.common.exception.EmailCannotSentException;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,7 +15,7 @@ public class EmailService implements Notification {
 
     private final JavaMailSender javaMailSender;
 
-    public void sendEmail(String subject,String text,String to) {
+    public void sendEmail(String subject,String text,String to) throws Exception {
         try {
             SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
             simpleMailMessage.setSubject(subject);
@@ -25,7 +24,8 @@ public class EmailService implements Notification {
 
             javaMailSender.send(simpleMailMessage);
         }catch (Exception e) {
-            e.printStackTrace();
+
+            throw new EmailCannotSentException("There is a problem in email");
         }
 
 

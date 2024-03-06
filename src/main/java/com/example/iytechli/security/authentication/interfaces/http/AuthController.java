@@ -24,7 +24,7 @@ public class AuthController {
        return authService.authenticate(authenticationRequest);
    }
 
-   @GetMapping("/verify-otp")
+   @PostMapping("/verify-otp")
     public ResponseEntity<OtpVerificationResponse> verifyOTP(@RequestBody OtpVerificationRequest otpVerificationRequest) throws Exception{
        return authService.verifyOTP(otpVerificationRequest);
    }

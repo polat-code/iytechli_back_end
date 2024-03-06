@@ -57,7 +57,7 @@ public class AuthService {
                 .build();
 
         String otp = RandomStringUtils.randomNumeric(6);
-        user.setOtp(passwordEncoder.encode(otp));
+        user.setOtp(otp);
 
         Date otpExpiredDate = new Date(System.currentTimeMillis() + otpExpirationMilliSeconds);
         user.setOtpExpiredDate(otpExpiredDate);
@@ -118,15 +118,28 @@ public class AuthService {
     }
 
     public ResponseEntity<OtpVerificationResponse> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+        // Check whether email is valid
+        checkEmail(otpVerificationRequest.getEmail());
+
+        // Check authentication
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     otpVerificationRequest.getEmail(),
                     otpVerificationRequest.getPassword()
             ));
+
             Optional<User> optionalUser = userRepository.findByAlreadyEmail(otpVerificationRequest.getEmail());
             if(optionalUser.isEmpty()) {
                 throw new UsernameNotFoundException("There is no such a email");
             }
+
             User user = optionalUser.get();
+
+            // TODO Verify OTP
+            String requestOTP = otpVerificationRequest.getOtp();
+            if(!requestOTP.equals(user.getOtp())) {
+                throw new OtpNotValidException("OTP is invalid");
+            }
+
             var jwtToken = jwtService.generateToken(user);
             if(user.getOtpExpiredDate().before(new Date(System.currentTimeMillis()))) {
                 throw new OtpExpirationException();
