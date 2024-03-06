@@ -37,6 +37,8 @@ public class User implements UserDetails {
     private String otp;
     private Date otpExpiredDate;
 
+    // TODO Verify that user should have a boolean type to check whether it approve or not.
+
 
 
     private Role role = Role.USER;

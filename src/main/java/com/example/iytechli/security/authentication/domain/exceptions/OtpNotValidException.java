@@ -1,4 +1,4 @@
-package com.example.iytechli.security.authentication.domain.model.http;
+package com.example.iytechli.security.authentication.domain.exceptions;
 
 public class OtpNotValidException extends Exception{
     public OtpNotValidException() {

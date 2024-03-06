@@ -1,8 +1,6 @@
 package com.example.iytechli.security.authentication.application;
 
-import com.example.iytechli.security.authentication.domain.exceptions.AlreadyRegisteredUser;
-import com.example.iytechli.security.authentication.domain.exceptions.EmailNotValidException;
-import com.example.iytechli.security.authentication.domain.exceptions.OtpExpirationException;
+import com.example.iytechli.security.authentication.domain.exceptions.*;
 import com.example.iytechli.security.authentication.domain.model.http.*;
 import com.example.iytechli.user.domain.entity.User;
 import com.example.iytechli.user.repository.UserRepository;
@@ -55,17 +53,8 @@ public class AuthService {
                 .isAbleToSentPost(true)
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .build();
-
-        String otp = RandomStringUtils.randomNumeric(6);
-        user.setOtp(otp);
-
-        Date otpExpiredDate = new Date(System.currentTimeMillis() + otpExpirationMilliSeconds);
-        user.setOtpExpiredDate(otpExpiredDate);
-
-        // send an email
-        authEmailService.sendAuthEmail(otp,user.getName(), user.getSurname(), user.getEmail());
-
-        userRepository.save(user);
+        // send otp
+        sendOTP(user);
 
         // Send jwt token in otp verification.
         // String jwtToken = jwtService.generateToken(user);
@@ -89,8 +78,23 @@ public class AuthService {
 
     }
 
-    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) {
-        try {
+    private void sendOTP(User user) throws Exception {
+
+        String newoOtp = RandomStringUtils.randomNumeric(6);
+        user.setOtp(newoOtp);
+
+        Date otpExpiredDate = new Date(System.currentTimeMillis() + otpExpirationMilliSeconds);
+        user.setOtpExpiredDate(otpExpiredDate);
+
+        userRepository.save(user);
+
+        // send an email
+        authEmailService.sendAuthEmail(user.getOtp(), user.getName(), user.getSurname(), user.getEmail());
+
+    }
+
+    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) throws Exception{
+
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authenticationRequest.getEmail(),
@@ -99,23 +103,28 @@ public class AuthService {
 
             );
 
-
-            Optional<User> user = userRepository.findByAlreadyEmail(authenticationRequest.getEmail());
-            if(user.isEmpty()) {
+            Optional<User> optionalUser = userRepository.findByAlreadyEmail(authenticationRequest.getEmail());
+            if(optionalUser.isEmpty()) {
                 throw new UsernameNotFoundException("There is no such a user");
             }
 
-            String jwtToken = jwtService.generateToken(user.get());
+            User user = optionalUser.get();
+
+            // TODO Check that user approve its email or not .
+            if(!(user.getOtp() == null)){
+                sendOTP(user);
+                throw new OtpNotApprovedException("OTP is not approved. New OTP is sent to email");
+            }
+
+            String jwtToken = jwtService.generateToken(user);
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
                     .token(jwtToken)
                     .build();
 
             return new ResponseEntity<>(authenticationResponse,HttpStatus.OK);
-
-        }catch (Exception e) {
-            throw new UsernameNotFoundException("There is no such a user");
-        }
     }
+
+    // TODO Generate OTP and send an email.
 
     public ResponseEntity<OtpVerificationResponse> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
         // Check whether email is valid
@@ -139,14 +148,15 @@ public class AuthService {
             if(!requestOTP.equals(user.getOtp())) {
                 throw new OtpNotValidException("OTP is invalid");
             }
-
-            var jwtToken = jwtService.generateToken(user);
             if(user.getOtpExpiredDate().before(new Date(System.currentTimeMillis()))) {
                 throw new OtpExpirationException();
             }
 
             user.setOtp(null);
             user.setOtpExpiredDate(null);
+
+            var jwtToken = jwtService.generateToken(user);
+
             userRepository.save(user);
 
             OtpVerificationResponse otpVerificationResponse = OtpVerificationResponse.builder()
