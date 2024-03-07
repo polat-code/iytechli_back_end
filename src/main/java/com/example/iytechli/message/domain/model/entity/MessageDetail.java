@@ -4,8 +4,8 @@ import com.example.iytechli.user.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
@@ -20,8 +20,12 @@ public class MessageDetail {
     @Id
     private String id;
 
+    @DBRef
     private User clientUser;
+
+    @DBRef
     private User crossClientUser;
-    private List<Message> messageDetails;
+
+    private List<Message> messages;
     private Date createdAt;
 }

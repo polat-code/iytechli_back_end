@@ -11,10 +11,11 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Builder
-public class MessageDetailsResponse {
+public class AllMessagesResponse {
 
     private String messageDetailId;
-    private User crossClientUser;
+    private String crossClientUserName;
+    private String crossClientUserSurname;
     private Date createdAt;
     private String lastMessage;
     private UserType lastMessageBy;
