@@ -1,6 +1,5 @@
 package com.example.iytechli.security.authentication.application;
 
-import com.example.iytechli.message.application.MessagesService;
 import com.example.iytechli.security.authentication.domain.exceptions.*;
 import com.example.iytechli.security.authentication.domain.model.http.*;
 import com.example.iytechli.user.domain.entity.User;
@@ -28,7 +27,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final AuthEmailService  authEmailService;
-    private final MessagesService messagesService;
+
 
     @Value("${application.otp.otpExpiration}")
     private  long otpExpirationMilliSeconds;
@@ -160,8 +159,6 @@ public class AuthService {
 
             user = userRepository.save(user);
 
-            // TODO Create a Messages document for each user
-            messagesService.initializeUserMessages(user);
 
             OtpVerificationResponse otpVerificationResponse = OtpVerificationResponse.builder()
                     .token(jwtToken)
