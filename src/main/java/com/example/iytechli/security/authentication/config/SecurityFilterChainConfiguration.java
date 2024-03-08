@@ -34,7 +34,7 @@ public class SecurityFilterChainConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
-                                .permitAll()
+                                .permitAll().anyRequest().authenticated()
 
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
