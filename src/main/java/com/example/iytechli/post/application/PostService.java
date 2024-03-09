@@ -29,7 +29,7 @@ public class PostService {
 
     public ResponseEntity<Page<AllPostsResponse>> getAllPost(int pageNo, int pageSize,String userId) {
         Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("createdAt").descending());
-        Page<Post> pagePosts =  postRepository.findAll(pageable);
+        Page<Post> pagePosts =  postRepository.findByIsActivePostTrue(pageable);
 
         Optional<User> optionalUser = userService.findUserById(userId);
         if(optionalUser.isEmpty()) {
