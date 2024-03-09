@@ -7,6 +7,7 @@ import com.example.iytechli.message.repository.ConversationRepository;
 import com.example.iytechli.user.application.UserService;
 import com.example.iytechli.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -36,7 +37,8 @@ public class ConversationService {
         }
 
         Query query = new Query();
-        query.addCriteria(Criteria.where("participants").elemMatch(Criteria.where("_id").is(conversationRequest.getClientUserId())));
+        query.addCriteria(Criteria.where("participants").elemMatch(Criteria.where("$id").is(new ObjectId(conversationRequest.getClientUserId()))));
+
         List<Conversation> conversations = mongoTemplate.find(query,Conversation.class);
 
         List<ConversationsResponse> conversationsResponses = new ArrayList<>();
