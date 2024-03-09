@@ -39,4 +39,6 @@ public class Post {
     private boolean isActivePost;
     private Date createdAt;
 
+    private String noteToAdmin;
+
 }
