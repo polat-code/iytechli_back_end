@@ -51,7 +51,7 @@ public class PostService {
                 .postId(post.getId())
                 .content(post.getContent())
                 // TODO Test isUserLikes
-                .isUserLikes(post.getLikes().contains(user))
+                .isCurrentUserLikePost(post.getLikes().contains(user))
                 .photoList(post.getPhotos())
                 .numberOfComments(post.getComments().size())
                 .numberOfLikes(post.getLikes().size())
@@ -79,7 +79,7 @@ public class PostService {
                 .content(createPostRequest.getContent())
                 .photos(photos)
                 .noteToAdmin(createPostRequest.getNoteToAdmin())
-                .isActivePost(false)
+                .isActivePost(true)
                 .createdAt(new Date())
                 .comments(new ArrayList<>())
                 .compliments(new ArrayList<>())
@@ -108,5 +108,13 @@ public class PostService {
         }
         postRepository.save(post);
         return new ResponseEntity<>("Like is successful",HttpStatus.OK);
+    }
+
+    public Optional<Post> findPostById(String postId) {
+        return postRepository.findById(postId);
+    }
+
+    public void savePost(Post post) {
+        postRepository.save(post);
     }
 }

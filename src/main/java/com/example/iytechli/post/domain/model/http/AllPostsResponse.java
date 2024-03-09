@@ -20,6 +20,6 @@ public class AllPostsResponse {
     private List<Photo> photoList;
     private int numberOfComments;
     private int numberOfLikes;
-    private boolean isUserLikes;
+    private boolean isCurrentUserLikePost;
     private Date createdAt;
 }

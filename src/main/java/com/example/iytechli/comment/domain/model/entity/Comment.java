@@ -1,6 +1,7 @@
 package com.example.iytechli.comment.domain.model.entity;
 
 import com.example.iytechli.compliment.domain.model.entity.Compliment;
+import com.example.iytechli.post.domain.model.entity.Post;
 import com.example.iytechli.user.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,6 +40,8 @@ public class Comment {
     private Date isUpdatedAt;
 
     private boolean isActiveComment;
+
+    // TODO Create a field that checks the evaluation of comment
 
 
 }

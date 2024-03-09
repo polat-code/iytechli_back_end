@@ -41,4 +41,7 @@ public class Post {
 
     private String noteToAdmin;
 
+    // TODO Create a field that checks the evaluation of post
+
+
 }
