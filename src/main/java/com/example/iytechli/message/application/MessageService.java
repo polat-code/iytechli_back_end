@@ -102,7 +102,7 @@ public class MessageService {
         for(Message message : messages) {
             MessageDetailResponse messageDetailResponse =
                     MessageDetailResponse.builder()
-                            .messageOwner(message.getSenderUser().equals(clientUserId)
+                            .messageOwner(message.getSenderUser().getId().equals(clientUserId)
                                     ? UserMessageType.CLIENT
                                     : UserMessageType.CROSS_CLIENT)
                             .content(message.getContent())
