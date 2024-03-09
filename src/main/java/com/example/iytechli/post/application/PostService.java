@@ -1,11 +1,9 @@
 package com.example.iytechli.post.application;
 
+import com.example.iytechli.post.domain.exceptions.PostNotFoundException;
 import com.example.iytechli.post.domain.model.entity.Photo;
 import com.example.iytechli.post.domain.model.entity.Post;
-import com.example.iytechli.post.domain.model.http.AllPostsRequest;
-import com.example.iytechli.post.domain.model.http.AllPostsResponse;
-import com.example.iytechli.post.domain.model.http.CreatePostPhotoRequest;
-import com.example.iytechli.post.domain.model.http.CreatePostRequest;
+import com.example.iytechli.post.domain.model.http.*;
 import com.example.iytechli.post.repository.PostRepository;
 import com.example.iytechli.user.application.UserService;
 import com.example.iytechli.user.domain.entity.User;
@@ -29,13 +27,18 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public ResponseEntity<Page<AllPostsResponse>> getAllPost(int pageNo, int pageSize) {
+    public ResponseEntity<Page<AllPostsResponse>> getAllPost(int pageNo, int pageSize,String userId) {
         Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("createdAt").descending());
         Page<Post> pagePosts =  postRepository.findAll(pageable);
 
+        Optional<User> optionalUser = userService.findUserById(userId);
+        if(optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no such a userId " + userId);
+        }
+
         List<AllPostsResponse> allPostsResponseList = pagePosts.getContent()
                 .stream()
-                .map(this::convertToAllPostsResponse)
+                .map(post -> convertToAllPostsResponse(post,optionalUser.get()))
                 .collect(Collectors.toList());
 
         Page<AllPostsResponse> allPostsResponsesPage = new PageImpl<>(allPostsResponseList,pageable,pagePosts.getTotalPages());
@@ -43,10 +46,12 @@ public class PostService {
         return new ResponseEntity<>(allPostsResponsesPage,HttpStatus.OK);
     }
 
-    private AllPostsResponse convertToAllPostsResponse(Post post) {
+    private AllPostsResponse convertToAllPostsResponse(Post post,User user) {
         return AllPostsResponse.builder()
                 .postId(post.getId())
                 .content(post.getContent())
+                // TODO Test isUserLikes
+                .isUserLikes(post.getLikes().contains(user))
                 .photoList(post.getPhotos())
                 .numberOfComments(post.getComments().size())
                 .numberOfLikes(post.getLikes().size())
@@ -83,5 +88,25 @@ public class PostService {
         postRepository.save(post);
         return new ResponseEntity<>("Post is saved successfully", HttpStatus.OK);
 
+    }
+
+    public ResponseEntity<String> likePost(LikePostRequest likePostRequest) throws Exception {
+        Optional<Post> optionalPost = postRepository.findById(likePostRequest.getPostId());
+        if(optionalPost.isEmpty()) {
+            throw new PostNotFoundException("There is no such a post " + likePostRequest.getPostId());
+        }
+        Optional<User> optionalUser = userService.findUserById(likePostRequest.getUserId());
+        if(optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no scuh a userId: " + likePostRequest.getUserId());
+        }
+        Post post = optionalPost.get();
+        User user = optionalUser.get();
+        if(post.getLikes().contains(user)) {
+            post.getLikes().remove(user);
+        }else {
+            post.getLikes().add(user);
+        }
+        postRepository.save(post);
+        return new ResponseEntity<>("Like is successful",HttpStatus.OK);
     }
 }
