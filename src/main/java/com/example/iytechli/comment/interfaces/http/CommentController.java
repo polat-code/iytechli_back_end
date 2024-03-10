@@ -1,10 +1,7 @@
 package com.example.iytechli.comment.interfaces.http;
 
 import com.example.iytechli.comment.application.CommentService;
-import com.example.iytechli.comment.domain.model.http.AllCommentsByPostRequest;
-import com.example.iytechli.comment.domain.model.http.AllCommentsByPostResponse;
-import com.example.iytechli.comment.domain.model.http.CreateCommentRequest;
-import com.example.iytechli.comment.domain.model.http.LikeCommentRequest;
+import com.example.iytechli.comment.domain.model.http.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
@@ -33,4 +30,9 @@ public class CommentController {
     public ResponseEntity<String> likeComment(@RequestBody LikeCommentRequest likeCommentRequest) throws Exception {
         return commentService.likeComment(likeCommentRequest);
     }
-}
+
+    @PostMapping("/dislike")
+    public ResponseEntity<String> dislikeComment(@RequestBody DislikeCommentRequest dislikeCommentRequest) throws Exception {
+        return commentService.dislikeComment(dislikeCommentRequest);
+    }
+ }

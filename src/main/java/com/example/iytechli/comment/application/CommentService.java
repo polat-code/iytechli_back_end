@@ -2,10 +2,7 @@ package com.example.iytechli.comment.application;
 
 import com.example.iytechli.comment.domain.exceptions.CommentNotFoundException;
 import com.example.iytechli.comment.domain.model.entity.Comment;
-import com.example.iytechli.comment.domain.model.http.AllCommentsByPostRequest;
-import com.example.iytechli.comment.domain.model.http.AllCommentsByPostResponse;
-import com.example.iytechli.comment.domain.model.http.CreateCommentRequest;
-import com.example.iytechli.comment.domain.model.http.LikeCommentRequest;
+import com.example.iytechli.comment.domain.model.http.*;
 import com.example.iytechli.comment.repository.CommentRepository;
 import com.example.iytechli.post.application.PostService;
 import com.example.iytechli.post.domain.exceptions.PostNotFoundException;
@@ -120,6 +117,13 @@ public class CommentService {
         }else {
             likes.add(user);
         }
+
+        // Check that user dislikes the same comment
+        if(optionalComment.get().getDislikes().contains(user)){
+            optionalComment.get().getDislikes().remove(user);
+        }
+
+
         commentRepository.save(optionalComment.get());
         return new ResponseEntity<>("Like is successful",HttpStatus.OK);
 
@@ -132,5 +136,28 @@ public class CommentService {
             throw new CommentNotFoundException("There is no such commentId " + commentId);
         }
         return optionalComment;
+    }
+
+    public ResponseEntity<String> dislikeComment(DislikeCommentRequest dislikeCommentRequest) throws Exception{
+        Optional<User> optionalUser = checkUser(dislikeCommentRequest.getUserId());
+        Optional<Comment> optionalComment = checkComment(dislikeCommentRequest.getCommentId());
+
+        Comment comment = optionalComment.get();
+        List<User> dislikes = comment.getDislikes();
+        User user = optionalUser.get();
+
+        if(dislikes.contains(user)){
+            dislikes.remove(user);
+        }else {
+            dislikes.add(user);
+        }
+        // Check that user likes the same comment
+        if(comment.getLikes().contains(user)) {
+            comment.getLikes().remove(user);
+        }
+
+        commentRepository.save(comment);
+        return new ResponseEntity<>("Dislike is successful",HttpStatus.OK);
+
     }
 }
