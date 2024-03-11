@@ -1,5 +1,6 @@
 package com.example.iytechli.message.application;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.message.domain.exceptions.ConversationNotFoundException;
 import com.example.iytechli.message.domain.exceptions.MessageDetailNotFoundExcepiton;
 import com.example.iytechli.message.domain.model.entity.Conversation;
@@ -31,7 +32,7 @@ public class MessageService {
     private final ConversationService conversationService;
     private final UserService userService;
 
-    public ResponseEntity<List<MessageDetailResponse>> getAllMessagesByConversationId(
+    public ResponseEntity<ApiResponse<List<MessageDetailResponse>>> getAllMessagesByConversationId(
             MessageDetailRequest messageDetailRequest) throws Exception
     {
         List<Message> messages = messageRepository.findAllByConversation_Id(messageDetailRequest.getConversationId());
@@ -41,11 +42,11 @@ public class MessageService {
         }
         List<MessageDetailResponse> messageDetailResponseList = convertAllMessagesConversationHas(messages,messageDetailRequest.getClientUserId());
 
-        return new ResponseEntity<>(messageDetailResponseList, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(messageDetailResponseList,"Messages by conversation id",200,true,new Date()) , HttpStatus.OK);
 
     }
 
-    public ResponseEntity<List<MessageDetailResponse>> getAllMessagesByCrossClientId(
+    public ResponseEntity<ApiResponse<List<MessageDetailResponse>>> getAllMessagesByCrossClientId(
             MessageDetailRequestByCrossUserId messageDetailRequestByCrossUserId) throws Exception
     {
         Optional<Conversation> optionalConversation = conversationService
@@ -84,7 +85,7 @@ public class MessageService {
             foundConversation = conversationService.saveNewConversation(conversation);
 
             // There is no any message.
-            return new ResponseEntity<>(new ArrayList<>(),HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(new ArrayList<>(),"Empty messages",200,true,new Date()) ,HttpStatus.OK);
         }else {
             foundConversation = optionalConversation.get();
         }
@@ -93,7 +94,7 @@ public class MessageService {
         List<Message> messages =  messageRepository.findAllByConversation_Id(foundConversation.getId());
 
         List<MessageDetailResponse> messageDetailResponseList = convertAllMessagesConversationHas(messages,messageDetailRequestByCrossUserId.getClientUserId());
-        return new ResponseEntity<>(messageDetailResponseList,HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(messageDetailResponseList,"All messages",200,true,new Date()) ,HttpStatus.OK);
 
     }
 
@@ -116,7 +117,7 @@ public class MessageService {
     }
 
 
-    public ResponseEntity<String> saveMessage(SaveMessageRequest saveMessageRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> saveMessage(SaveMessageRequest saveMessageRequest) throws Exception {
         Optional<Conversation> conversation = conversationService.getConversationByConversationId(saveMessageRequest.getConversationId());
         if(conversation.isEmpty()) {
             throw new ConversationNotFoundException("There is no such a conversation " + saveMessageRequest.getConversationId());
@@ -142,6 +143,6 @@ public class MessageService {
 
         conversationService.save(conversation.get());
 
-        return new ResponseEntity<>("Message is added successfully",HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>( "Message is added successfully","",200,true,new Date()),HttpStatus.OK);
     }
 }

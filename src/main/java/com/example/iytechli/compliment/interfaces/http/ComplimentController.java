@@ -1,5 +1,6 @@
 package com.example.iytechli.compliment.interfaces.http;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.compliment.application.CommentComplimentService;
 import com.example.iytechli.compliment.application.PostComplimentService;
 import com.example.iytechli.compliment.domain.model.http.CreateCommentCompliment;
@@ -17,12 +18,12 @@ public class ComplimentController {
     private final CommentComplimentService commentComplimentService;
 
     @PostMapping("/post")
-    public ResponseEntity<String> createPostCompliment(@RequestBody CreatePostComplimentRequest createPostComplimentRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> createPostCompliment(@RequestBody CreatePostComplimentRequest createPostComplimentRequest) throws Exception {
         return postComplimentService.createPostComplimentObject(createPostComplimentRequest);
     }
 
     @PostMapping("/comment")
-    public ResponseEntity<String> createCommentCompliment(@RequestBody CreateCommentCompliment createCommentCompliment) throws Exception {
+    public ResponseEntity<ApiResponse<String>> createCommentCompliment(@RequestBody CreateCommentCompliment createCommentCompliment) throws Exception {
         return commentComplimentService.createCommentCompliment(createCommentCompliment);
     }
 }

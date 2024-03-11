@@ -4,6 +4,7 @@ import com.example.iytechli.comment.domain.exceptions.CommentNotFoundException;
 import com.example.iytechli.comment.domain.model.entity.Comment;
 import com.example.iytechli.comment.domain.model.http.*;
 import com.example.iytechli.comment.repository.CommentRepository;
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.post.application.PostService;
 import com.example.iytechli.post.domain.exceptions.PostNotFoundException;
 import com.example.iytechli.post.domain.model.entity.Post;
@@ -30,7 +31,7 @@ public class CommentService {
     private final UserService userService;
     private final PostService postService;
 
-    public ResponseEntity<String> createComment(CreateCommentRequest createCommentRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> createComment(CreateCommentRequest createCommentRequest) throws Exception {
         Optional<User> optionalUser = checkUser(createCommentRequest.getUserId());
         Optional<Post> optionalPost = checkPost(createCommentRequest.getPostId());
 
@@ -42,7 +43,7 @@ public class CommentService {
         post.getComments().add(comment);
         postService.savePost(post);
 
-        return new ResponseEntity<>("Comment is created successfully", HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Comment is created successfully","",200,true,new Date()), HttpStatus.OK);
     }
 
     private Optional<Post> checkPost(String postId) throws PostNotFoundException {
@@ -75,7 +76,7 @@ public class CommentService {
                 .build();
     }
 
-    public ResponseEntity<List<AllCommentsByPostResponse>> getAllCommentsByPost(AllCommentsByPostRequest allCommentsByPostRequest) throws Exception {
+    public ResponseEntity<ApiResponse<List<AllCommentsByPostResponse>>> getAllCommentsByPost(AllCommentsByPostRequest allCommentsByPostRequest) throws Exception {
         Optional<User> optionalUser = checkUser(allCommentsByPostRequest.getUserId());
         Optional<Post> optionalPost = checkPost(allCommentsByPostRequest.getPostId());
 
@@ -86,7 +87,7 @@ public class CommentService {
                 .map(comment -> mapToAllCommentsByPostResponse(comment,optionalUser.get()))
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(allCommentsByPostResponseList,HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(allCommentsByPostResponseList,"All Comments",200,true,new Date()) ,HttpStatus.OK);
     }
 
     private AllCommentsByPostResponse mapToAllCommentsByPostResponse(Comment comment, User user) {
@@ -104,7 +105,7 @@ public class CommentService {
                 .build();
     }
 
-    public ResponseEntity<String> likeComment(LikeCommentRequest likeCommentRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> likeComment(LikeCommentRequest likeCommentRequest) throws Exception {
         Optional<User> optionalUser = checkUser(likeCommentRequest.getUserId());
         Optional<Comment> optionalComment = checkComment(likeCommentRequest.getCommentId());
 
@@ -125,7 +126,7 @@ public class CommentService {
 
 
         commentRepository.save(optionalComment.get());
-        return new ResponseEntity<>("Like is successful",HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Like is successful","",200,true,new Date()),HttpStatus.OK);
 
     }
 

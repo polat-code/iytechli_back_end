@@ -1,10 +1,12 @@
 package com.example.iytechli.security.authentication.application;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.security.authentication.domain.exceptions.*;
 import com.example.iytechli.security.authentication.domain.model.http.*;
 import com.example.iytechli.user.domain.entity.User;
 import com.example.iytechli.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
@@ -32,7 +35,7 @@ public class AuthService {
     @Value("${application.otp.otpExpiration}")
     private  long otpExpirationMilliSeconds;
 
-    public ResponseEntity<RegisterResponse> register(RegisterRequest registerRequest) throws Exception{
+    public ResponseEntity<ApiResponse<RegisterResponse>> register(RegisterRequest registerRequest) throws Exception{
         //  Check email is iyte email or not.
         String email = registerRequest.getEmail();
         checkEmail(email);
@@ -63,8 +66,9 @@ public class AuthService {
         RegisterResponse registerResponse =  RegisterResponse.builder()
                 .message("verification code is sent to your email address")
                 .build();
+        log.info("Email is sent to " + registerRequest.getEmail());
 
-        return new ResponseEntity<>(registerResponse, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(registerResponse,"successfully registered",200,true,new Date()), HttpStatus.OK);
     }
 
     private void checkEmail(String email) throws Exception {
@@ -94,7 +98,7 @@ public class AuthService {
 
     }
 
-    public ResponseEntity<AuthenticationResponse> authenticate(AuthenticationRequest authenticationRequest) throws Exception{
+    public ResponseEntity<ApiResponse<AuthenticationResponse>> authenticate(AuthenticationRequest authenticationRequest) throws Exception{
 
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -122,11 +126,11 @@ public class AuthService {
                     .token(jwtToken)
                     .build();
 
-            return new ResponseEntity<>(authenticationResponse,HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(authenticationResponse,"Authenticate successful",200,true,new Date()) ,HttpStatus.OK);
     }
 
 
-    public ResponseEntity<OtpVerificationResponse> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
+    public ResponseEntity<ApiResponse<OtpVerificationResponse>> verifyOTP(OtpVerificationRequest otpVerificationRequest) throws Exception {
         // Check whether email is valid
         checkEmail(otpVerificationRequest.getEmail());
 
@@ -164,6 +168,6 @@ public class AuthService {
                     .token(jwtToken)
                     .build();
 
-            return new ResponseEntity<>(otpVerificationResponse,HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(otpVerificationResponse,"OTP Verification successful",200,true,new Date()) ,HttpStatus.OK);
     }
 }

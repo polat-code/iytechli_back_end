@@ -3,6 +3,7 @@ package com.example.iytechli.compliment.application;
 import com.example.iytechli.comment.application.CommentService;
 import com.example.iytechli.comment.domain.exceptions.CommentNotFoundException;
 import com.example.iytechli.comment.domain.model.entity.Comment;
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.compliment.domain.model.entity.CommentCompliment;
 import com.example.iytechli.compliment.domain.model.entity.PostCompliment;
 import com.example.iytechli.compliment.domain.model.http.CreateCommentCompliment;
@@ -31,7 +32,7 @@ public class CommentComplimentService {
     private final UserService userService;
     private final CommentService commentService;
 
-    public ResponseEntity<String> createCommentCompliment(
+    public ResponseEntity<ApiResponse<String>> createCommentCompliment(
             CreateCommentCompliment createCommentCompliment) throws Exception
     {
         User user = checkUser(createCommentCompliment.getUserId());
@@ -41,7 +42,7 @@ public class CommentComplimentService {
 
         commentComplimentRepository.save(commentCompliment);
 
-        return new ResponseEntity<>("Comment compliment is created",HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Comment compliment is created","",200,true,new Date()),HttpStatus.OK);
     }
 
     private CommentCompliment createCommentComplimentObject(

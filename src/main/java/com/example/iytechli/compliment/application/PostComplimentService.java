@@ -1,5 +1,6 @@
 package com.example.iytechli.compliment.application;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.compliment.domain.model.entity.PostCompliment;
 import com.example.iytechli.compliment.domain.model.http.CreatePostComplimentRequest;
 import com.example.iytechli.compliment.repository.PostComplimentRepository;
@@ -26,7 +27,7 @@ public class PostComplimentService {
     private final PostService postService;
 
     // TODO Compliment service lerini ayır.
-    public ResponseEntity<String> createPostComplimentObject(
+    public ResponseEntity<ApiResponse<String>> createPostComplimentObject(
             CreatePostComplimentRequest createPostComplimentRequest) throws Exception
     {
         User user = checkUser(createPostComplimentRequest.getUserId());
@@ -36,7 +37,7 @@ public class PostComplimentService {
 
         postComplimentRepository.save(postCompliment);
 
-        return new ResponseEntity<>("Comment Compliment is added", HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Comment Compliment is added","",200,true,new Date()), HttpStatus.OK);
 
     }
 

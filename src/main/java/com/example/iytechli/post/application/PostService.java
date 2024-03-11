@@ -1,5 +1,6 @@
 package com.example.iytechli.post.application;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.post.domain.exceptions.PostNotFoundException;
 import com.example.iytechli.post.domain.model.entity.Photo;
 import com.example.iytechli.post.domain.model.entity.Post;
@@ -27,7 +28,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserService userService;
 
-    public ResponseEntity<Page<AllPostsResponse>> getAllPost(int pageNo, int pageSize,String userId) {
+    public ResponseEntity<ApiResponse<Page<AllPostsResponse>>> getAllPost(int pageNo, int pageSize, String userId) {
         Pageable pageable = PageRequest.of(pageNo,pageSize, Sort.by("createdAt").descending());
         Page<Post> pagePosts =  postRepository.findByIsActivePostTrue(pageable);
 
@@ -43,7 +44,7 @@ public class PostService {
 
         Page<AllPostsResponse> allPostsResponsesPage = new PageImpl<>(allPostsResponseList,pageable,pagePosts.getTotalPages());
 
-        return new ResponseEntity<>(allPostsResponsesPage,HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(allPostsResponsesPage,"Posts are sent successfully",200,true,new Date()) ,HttpStatus.OK);
     }
 
     private AllPostsResponse convertToAllPostsResponse(Post post,User user) {
@@ -59,7 +60,7 @@ public class PostService {
                 .build();
     }
     // TODO Assign isActivePost to a variable to change sometimes
-    public ResponseEntity<String> createPost(CreatePostRequest createPostRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> createPost(CreatePostRequest createPostRequest) throws Exception {
         Optional<User> optionalUser = userService.findUserById(createPostRequest.getContentOwnerUserId());
         if(optionalUser.isEmpty()) {
             throw new UsernameNotFoundException("There is not such a content owner " + createPostRequest.getContentOwnerUserId());
@@ -79,18 +80,19 @@ public class PostService {
                 .content(createPostRequest.getContent())
                 .photos(photos)
                 .noteToAdmin(createPostRequest.getNoteToAdmin())
-                .isActivePost(true)
+                // TODO Assign isActivePost a variable to share posts automatically in the system
+                .isActivePost(false)
                 .createdAt(new Date())
                 .comments(new ArrayList<>())
                 .compliments(new ArrayList<>())
                 .likes(new ArrayList<>())
                 .build();
         postRepository.save(post);
-        return new ResponseEntity<>("Post is saved successfully", HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Post is saved successfully","",200,true,new Date()), HttpStatus.OK);
 
     }
 
-    public ResponseEntity<String> likePost(LikePostRequest likePostRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> likePost(LikePostRequest likePostRequest) throws Exception {
         Optional<Post> optionalPost = postRepository.findById(likePostRequest.getPostId());
         if(optionalPost.isEmpty()) {
             throw new PostNotFoundException("There is no such a post " + likePostRequest.getPostId());
@@ -107,7 +109,7 @@ public class PostService {
             post.getLikes().add(user);
         }
         postRepository.save(post);
-        return new ResponseEntity<>("Like is successful",HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>("Like is successful","",200,true,new Date()),HttpStatus.OK);
     }
 
     public Optional<Post> findPostById(String postId) {

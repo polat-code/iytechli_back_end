@@ -7,7 +7,7 @@ public enum ErrorCodes {
     NOT_FOUND(404),
     EXPIRED(498),
     NOT_ACCEPTABLE(406),
-    ALREADY_EXIST(403);
+    ALREADY_EXIST(409);
 
 
 

@@ -1,5 +1,6 @@
 package com.example.iytechli.post.interfaces.http;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.post.application.PostService;
 import com.example.iytechli.post.domain.model.http.AllPostsRequest;
 import com.example.iytechli.post.domain.model.http.AllPostsResponse;
@@ -21,17 +22,17 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/all")
-    public ResponseEntity<Page<AllPostsResponse>> getAllPosts(@RequestBody AllPostsRequest allPostsRequest) {
+    public ResponseEntity<ApiResponse<Page<AllPostsResponse>>> getAllPosts(@RequestBody AllPostsRequest allPostsRequest) {
         return postService.getAllPost(allPostsRequest.getPageNo(), allPostsRequest.getPageSize() , allPostsRequest.getUserId());
     }
 
     @PostMapping("")
-    public ResponseEntity<String> createPost(@RequestBody CreatePostRequest createPostRequest) throws Exception {
+    public ResponseEntity<ApiResponse<String>> createPost(@RequestBody CreatePostRequest createPostRequest) throws Exception {
         return postService.createPost(createPostRequest);
     }
 
     @PostMapping("/like")
-    public ResponseEntity<String> likePost(@RequestBody LikePostRequest likePostRequest)  throws Exception{
+    public ResponseEntity<ApiResponse<String>> likePost(@RequestBody LikePostRequest likePostRequest)  throws Exception{
         return postService.likePost(likePostRequest);
     }
 

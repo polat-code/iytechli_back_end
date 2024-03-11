@@ -1,5 +1,6 @@
 package com.example.iytechli.message.interfaces.http;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.message.application.ConversationService;
 import com.example.iytechli.message.domain.model.http.ConversationRequest;
 import com.example.iytechli.message.domain.model.http.ConversationsResponse;
@@ -20,7 +21,7 @@ public class ConversationController {
     private final ConversationService conversationService;
     
     @GetMapping("/all/by-userid")
-    public ResponseEntity<List<ConversationsResponse>> getConversationsByUserId(@RequestBody ConversationRequest conversationRequest) throws Exception{
+    public ResponseEntity<ApiResponse<List<ConversationsResponse>>> getConversationsByUserId(@RequestBody ConversationRequest conversationRequest) throws Exception{
         return conversationService.getConversationsByUserId(conversationRequest);
     }
 

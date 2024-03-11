@@ -1,5 +1,6 @@
 package com.example.iytechli.message.application;
 
+import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.message.domain.model.entity.Conversation;
 import com.example.iytechli.message.domain.model.http.ConversationRequest;
 import com.example.iytechli.message.domain.model.http.ConversationsResponse;
@@ -17,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class ConversationService {
     private final MongoTemplate mongoTemplate;
     private final UserService userService;
 
-    public ResponseEntity<List<ConversationsResponse>> getConversationsByUserId (
+    public ResponseEntity<ApiResponse<List<ConversationsResponse>>> getConversationsByUserId (
             ConversationRequest conversationRequest) throws Exception
     {
         Optional<User> optionalUser = userService.findUserById(conversationRequest.getClientUserId());
@@ -61,7 +63,7 @@ public class ConversationService {
             conversationsResponses.add(conversationsResponse);
         }
 
-        return new ResponseEntity<>(conversationsResponses, HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(conversationsResponses,"Sucessfull",200,true,new Date()) , HttpStatus.OK);
     }
 
     public Optional<Conversation> getConversationByClientUserIdAndCrossClientUserId(String clientUserId, String crossClientUserId) {
