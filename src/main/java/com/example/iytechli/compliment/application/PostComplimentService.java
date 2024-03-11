@@ -2,7 +2,6 @@ package com.example.iytechli.compliment.application;
 
 import com.example.iytechli.compliment.domain.model.entity.PostCompliment;
 import com.example.iytechli.compliment.domain.model.http.CreatePostComplimentRequest;
-import com.example.iytechli.compliment.repository.CommentComplimentRepository;
 import com.example.iytechli.compliment.repository.PostComplimentRepository;
 import com.example.iytechli.post.application.PostService;
 import com.example.iytechli.post.domain.exceptions.PostNotFoundException;
@@ -20,21 +19,20 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ComplimentService {
+public class PostComplimentService {
 
-    private final CommentComplimentRepository commentComplimentRepository;
     private final PostComplimentRepository postComplimentRepository;
     private final UserService userService;
     private final PostService postService;
 
     // TODO Compliment service lerini ayır.
-    public ResponseEntity<String> createPostCompliment(
+    public ResponseEntity<String> createPostComplimentObject(
             CreatePostComplimentRequest createPostComplimentRequest) throws Exception
     {
         User user = checkUser(createPostComplimentRequest.getUserId());
         Post post = checkPost(createPostComplimentRequest.getPostId());
 
-        PostCompliment postCompliment = createPostCompliment(post,user,createPostComplimentRequest);
+        PostCompliment postCompliment = createPostComplimentObject(post,user,createPostComplimentRequest);
 
         postComplimentRepository.save(postCompliment);
 
@@ -42,7 +40,7 @@ public class ComplimentService {
 
     }
 
-    private PostCompliment createPostCompliment(Post post,User user,CreatePostComplimentRequest createPostComplimentRequest) {
+    private PostCompliment createPostComplimentObject(Post post, User user, CreatePostComplimentRequest createPostComplimentRequest) {
         PostCompliment postCompliment = new PostCompliment();
         postCompliment.setDescription(createPostComplimentRequest.getDescription());
         postCompliment.setReportReason(createPostComplimentRequest.getReportReason());
@@ -58,7 +56,7 @@ public class ComplimentService {
             throw new PostNotFoundException("There is no such postId : " + postId);
         }
         return optionalPost.get();
-     }
+    }
 
     private User checkUser(String userId) throws Exception {
         Optional<User> optionalUser = userService.findUserById(userId);
@@ -67,4 +65,5 @@ public class ComplimentService {
         }
         return optionalUser.get();
     }
+
 }

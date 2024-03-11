@@ -160,4 +160,9 @@ public class CommentService {
         return new ResponseEntity<>("Dislike is successful",HttpStatus.OK);
 
     }
+
+    public Optional<Comment> getCommentById(String commentId) {
+        return commentRepository.findById(commentId);
+
+    }
 }

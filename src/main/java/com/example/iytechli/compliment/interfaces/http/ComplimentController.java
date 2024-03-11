@@ -1,23 +1,28 @@
 package com.example.iytechli.compliment.interfaces.http;
 
-import com.example.iytechli.compliment.application.ComplimentService;
+import com.example.iytechli.compliment.application.CommentComplimentService;
+import com.example.iytechli.compliment.application.PostComplimentService;
+import com.example.iytechli.compliment.domain.model.http.CreateCommentCompliment;
 import com.example.iytechli.compliment.domain.model.http.CreatePostComplimentRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/compliment")
 @RequiredArgsConstructor
 public class ComplimentController {
 
-    private final ComplimentService complimentService;
+    private final PostComplimentService postComplimentService;
+    private final CommentComplimentService commentComplimentService;
 
     @PostMapping("/post")
     public ResponseEntity<String> createPostCompliment(@RequestBody CreatePostComplimentRequest createPostComplimentRequest) throws Exception {
-        return complimentService.createPostCompliment(createPostComplimentRequest);
+        return postComplimentService.createPostComplimentObject(createPostComplimentRequest);
+    }
+
+    @PostMapping("/comment")
+    public ResponseEntity<String> createCommentCompliment(@RequestBody CreateCommentCompliment createCommentCompliment) throws Exception {
+        return commentComplimentService.createCommentCompliment(createCommentCompliment);
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 public class PostCompliment extends Compliment {
 
-
     @DBRef
     private Post post;
 }
