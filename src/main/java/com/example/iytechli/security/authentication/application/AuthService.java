@@ -153,6 +153,7 @@ public class AuthService {
                 throw new OtpNotValidException("OTP is invalid");
             }
             if(user.getOtpExpiredDate().before(new Date(System.currentTimeMillis()))) {
+                sendOTP(user);
                 throw new OtpExpirationException();
             }
 
@@ -162,7 +163,7 @@ public class AuthService {
             var jwtToken = jwtService.generateToken(user);
 
             user = userRepository.save(user);
-
+            // TODO Don't send jwt token to user. Direct the user into login page.
 
             OtpVerificationResponse otpVerificationResponse = OtpVerificationResponse.builder()
                     .token(jwtToken)
