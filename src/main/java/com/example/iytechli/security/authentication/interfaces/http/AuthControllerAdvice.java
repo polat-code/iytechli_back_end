@@ -48,6 +48,16 @@ public class AuthControllerAdvice {
     public ResponseEntity<ApiResponse<String>> otpNotApprovedException(OtpNotApprovedException ex, WebRequest webRequest){
         return new ResponseEntity<>(new ApiResponse<>("Error",ex.getMessage(), ErrorCodes.NOT_APPROVED.getErrorCode(),false, new Date()), HttpStatus.OK);
     }
+    @ExceptionHandler(RefreshPasswordCodeInvalidException.class)
+    public ResponseEntity<ApiResponse<String>> refreshPasswordCodeInvalidException(RefreshPasswordCodeInvalidException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ApiResponse<>("Error",ex.getMessage(), ErrorCodes.NOT_APPROVED.getErrorCode(),false, new Date()), HttpStatus.OK);
+    }
+    @ExceptionHandler(ApprovedRefreshPasswordCodeException.class)
+    public ResponseEntity<ApiResponse<String>> approvedRefreshPasswordCodeException(ApprovedRefreshPasswordCodeException ex, WebRequest webRequest){
+        return new ResponseEntity<>(new ApiResponse<>("Error",ex.getMessage(), ErrorCodes.NOT_FOUND.getErrorCode(),false, new Date()), HttpStatus.OK);
+    }
+
+
 
 
 

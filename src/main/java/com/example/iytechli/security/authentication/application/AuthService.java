@@ -108,12 +108,9 @@ public class AuthService {
 
             );
 
-            Optional<User> optionalUser = userRepository.findByAlreadyEmail(authenticationRequest.getEmail());
-            if(optionalUser.isEmpty()) {
-                throw new UsernameNotFoundException("There is no such a user");
-            }
+        Optional<User> optionalUser = checkUser(authenticationRequest.getEmail());
 
-            User user = optionalUser.get();
+        User user = optionalUser.get();
 
             // Check that user approve its email or not .
             if(!(user.getOtp() == null)){
@@ -127,6 +124,14 @@ public class AuthService {
                     .build();
 
             return new ResponseEntity<>(new ApiResponse<>(authenticationResponse,"Authenticate successful",200,true,new Date()) ,HttpStatus.OK);
+    }
+
+    private Optional<User> checkUser(String email) throws Exception {
+        Optional<User> optionalUser = userRepository.findByAlreadyEmail(email);
+        if(optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no such a user");
+        }
+        return optionalUser;
     }
 
 
@@ -170,5 +175,76 @@ public class AuthService {
                     .build();
 
             return new ResponseEntity<>(new ApiResponse<>(otpVerificationResponse,"OTP Verification successful",200,true,new Date()) ,HttpStatus.OK);
+    }
+
+    public ResponseEntity<ApiResponse<String>> forgetPassword(ForgetPasswordRequest forgetPasswordRequest) throws Exception{
+        Optional<User> optionalUser = checkUser(forgetPasswordRequest.getEmail());
+
+        if(!(optionalUser.get().getOtp() == null)) {
+            throw new OtpNotApprovedException("Otp is not approved");
+        }
+
+        sendRefreshPasswordCode(optionalUser.get());
+
+        return new ResponseEntity<>(new ApiResponse<>("Code is sent to email","",200,true,new Date()),HttpStatus.OK);
+    }
+
+    private void sendRefreshPasswordCode(User user) throws Exception {
+        String refreshPasswordCode = RandomStringUtils.randomNumeric(6);
+        user.setRefreshPasswordCode(refreshPasswordCode);
+
+        userRepository.save(user);
+        // send an email
+        authEmailService.sendRefreshPasswordCodeEmail(user.getRefreshPasswordCode(), user.getName(), user.getSurname(), user.getEmail());
+    }
+
+    public ResponseEntity<ApiResponse<VerifyForgetPasswordResponse>> verifyForgetPasswordCode(
+            VerifyForgetPasswordRequest verifyForgetPasswordRequest) throws Exception
+    {
+        Optional<User> optionalUser = checkUser(verifyForgetPasswordRequest.getEmail());
+        if(optionalUser.get().getRefreshPasswordCode() == null) {
+            throw new RefreshPasswordCodeInvalidException("Error ! Please leave this page");
+        }
+
+        if(!optionalUser.get().getRefreshPasswordCode().equals(verifyForgetPasswordRequest.getRefreshPasswordCode())) {
+            throw new RefreshPasswordCodeInvalidException("Invalid Password Code");
+        }
+        User user = optionalUser.get();
+        user.setRefreshPasswordCode(null);
+
+        // This is authentication when user enters new Password
+        String approvedRefreshPasswordCode = RandomStringUtils.randomNumeric(10);
+        user.setApprovedRefreshPasswordCode(approvedRefreshPasswordCode);
+
+        userRepository.save(user);
+
+        VerifyForgetPasswordResponse verifyForgetPasswordResponse =  VerifyForgetPasswordResponse.builder()
+                .approvedRefreshPasswordCode(approvedRefreshPasswordCode)
+                .build();
+
+        return new ResponseEntity<>(new ApiResponse<>(
+                verifyForgetPasswordResponse,"Successfully approved",200,true,new Date()),
+                HttpStatus.OK);
+    }
+
+    public ResponseEntity<ApiResponse<String>> changePassword(
+            ChangePasswordRequest changePasswordRequest) throws Exception
+    {
+        Optional<User> optionalUser = checkUser(changePasswordRequest.getEmail());
+        User user = optionalUser.get();
+        if(user.getApprovedRefreshPasswordCode() == null) {
+            throw new ApprovedRefreshPasswordCodeException("Invalid page. please leave this page");
+        }
+        if(!user.getApprovedRefreshPasswordCode().equals(changePasswordRequest.getApprovedRefreshPasswordCode())) {
+            throw new ApprovedRefreshPasswordCodeException("Invalid approved refresh token");
+        }
+
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        user.setApprovedRefreshPasswordCode(null);
+        userRepository.save(user);
+
+        return new ResponseEntity<>(
+                new ApiResponse<>("Changing password is successful","",200,true,new Date()),
+                HttpStatus.OK);
     }
 }

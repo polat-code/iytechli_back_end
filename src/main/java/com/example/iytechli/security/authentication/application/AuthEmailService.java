@@ -15,4 +15,9 @@ public class AuthEmailService {
                         + otp +"\n \nUnutma bu kod sadece 24 saat geçerlidir." , to );
 
     }
+    public void sendRefreshPasswordCodeEmail(String refreshPasswordCode, String name,String surname,String to) throws Exception {
+        emailService.sendEmail("Iytechli Şifre Yenileme",
+                "Merhaba, " + name + " " + surname + "\nŞifreni yenilemek  için bu kodu kullanabilirsin: "
+                        + refreshPasswordCode +"\n " , to );
+    }
 }

@@ -37,6 +37,9 @@ public class User implements UserDetails {
     private String otp;
     private Date otpExpiredDate;
 
+    private String refreshPasswordCode;
+    private String approvedRefreshPasswordCode;
+
     private Role role = Role.USER;
 
     @Override

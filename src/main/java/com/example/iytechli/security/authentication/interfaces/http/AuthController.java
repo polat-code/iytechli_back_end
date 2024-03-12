@@ -31,4 +31,22 @@ public class AuthController {
     public ResponseEntity<ApiResponse<OtpVerificationResponse>> verifyOTP(@RequestBody OtpVerificationRequest otpVerificationRequest) throws Exception{
        return authService.verifyOTP(otpVerificationRequest);
    }
+
+   @PostMapping("/forget-password")
+    public ResponseEntity<ApiResponse<String>> forgetPassword(@RequestBody ForgetPasswordRequest forgetPasswordRequest) throws Exception {
+       return authService.forgetPassword(forgetPasswordRequest);
+   }
+
+   @PostMapping("/verify-forget-password-code")
+    public ResponseEntity<ApiResponse<VerifyForgetPasswordResponse>> verifyForgetPasswordCode(
+            @RequestBody VerifyForgetPasswordRequest verifyForgetPasswordRequest) throws Exception {
+       return authService.verifyForgetPasswordCode(verifyForgetPasswordRequest);
+   }
+
+   @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<String>> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) throws Exception {
+       return authService.changePassword(changePasswordRequest);
+   }
+
+
 }
