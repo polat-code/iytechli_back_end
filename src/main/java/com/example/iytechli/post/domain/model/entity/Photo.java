@@ -11,7 +11,6 @@ import java.util.Date;
 @Builder
 public class Photo {
 
-    private String name;
     // Base64 data type
     private String image;
     private Date createdAt;

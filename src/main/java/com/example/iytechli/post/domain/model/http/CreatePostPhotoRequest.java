@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CreatePostPhotoRequest {
 
-    private String name;
     // Base64 data type
     private String image;
 }

@@ -120,6 +120,10 @@ public class AuthService {
 
             String jwtToken = jwtService.generateToken(user);
             AuthenticationResponse authenticationResponse = AuthenticationResponse.builder()
+                    .name(user.getName())
+                    .surname(user.getSurname())
+                    .email(user.getEmail())
+                    .userId(user.getId())
                     .token(jwtToken)
                     .build();
 
