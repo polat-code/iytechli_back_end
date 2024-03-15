@@ -22,7 +22,7 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     public ResponseEntity<ApiResponse<Page<AllPostsResponse>>> getAllPosts(@RequestBody AllPostsRequest allPostsRequest) {
         return postService.getAllPost(allPostsRequest.getPageNo(), allPostsRequest.getPageSize() , allPostsRequest.getUserId());
     }

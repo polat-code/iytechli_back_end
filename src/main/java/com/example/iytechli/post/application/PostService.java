@@ -83,7 +83,7 @@ public class PostService {
                 .photos(photos)
                 .noteToAdmin(createPostRequest.getNoteToAdmin())
                 // TODO Assign isActivePost a variable to share posts automatically in the system
-                .isActivePost(false)
+                .isActivePost(true)
                 .createdAt(new Date())
                 .comments(new ArrayList<>())
                 .compliments(new ArrayList<>())

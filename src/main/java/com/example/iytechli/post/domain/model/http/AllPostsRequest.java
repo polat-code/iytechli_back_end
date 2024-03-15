@@ -5,14 +5,12 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 public class AllPostsRequest {
 
     // Default values
-    private int pageNo = 0;
-    private int pageSize = 15;
-    @NonNull
+    private int pageNo;
+    private int pageSize;
     private String userId;
 
 }
