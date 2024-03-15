@@ -3,7 +3,10 @@ package com.example.iytechli.security.authentication.application;
 import com.example.iytechli.common.domain.http.ApiResponse;
 import com.example.iytechli.security.authentication.domain.exceptions.*;
 import com.example.iytechli.security.authentication.domain.model.http.*;
+import com.example.iytechli.user.domain.entity.ProfileStatus;
+import com.example.iytechli.user.domain.entity.UniversityRole;
 import com.example.iytechli.user.domain.entity.User;
+import com.example.iytechli.user.domain.entity.UserSettings;
 import com.example.iytechli.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +48,12 @@ public class AuthService {
         if(optionalUser.isPresent()) {
             throw new AlreadyRegisteredUser("Already Registered Email!");
         }
-
+        UniversityRole universityRole = UniversityRole.GUEST;
+        if(email.split("@")[1].equals("std.iyte.edu.tr")) {
+            universityRole = UniversityRole.STUDENT;
+        }else if (email.split("@")[1].equals("iyte.edu.tr")) {
+            universityRole = UniversityRole.EMPLOYEE;
+        }
 
         User user = User.builder()
                 .name(registerRequest.getName())
@@ -56,7 +64,13 @@ public class AuthService {
                 .updatedAt(new Date())
                 .isAbleToSentPost(true)
                 .phoneNumber(registerRequest.getPhoneNumber())
+                .userSettings(UserSettings
+                        .builder()
+                        .profileStatus(ProfileStatus.PRIVATE)
+                        .universityRole(universityRole)
+                        .build())
                 .build();
+
         // send otp
         sendOTP(user);
 
