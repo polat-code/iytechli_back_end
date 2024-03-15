@@ -67,6 +67,9 @@ public class PostService {
         }
         List<Photo> photos = new ArrayList<>();
         for(CreatePostPhotoRequest createPostPhotoRequest : createPostRequest.getPhotoList()) {
+            if(createPostPhotoRequest.getImage() == null) {
+                continue;
+            }
             Photo photo = Photo.builder()
                     .image(createPostPhotoRequest.getImage())
                     .createdAt(new Date())
