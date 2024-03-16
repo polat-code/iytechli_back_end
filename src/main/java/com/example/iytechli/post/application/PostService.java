@@ -121,4 +121,20 @@ public class PostService {
     public void savePost(Post post) {
         postRepository.save(post);
     }
+
+
+    private User checkUser(String userId) throws Exception {
+        Optional<User> optionalUser = userService.findUserById(userId);
+        if(optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no such userId " + userId);
+        }
+        return optionalUser.get();
+    }
+    private Post checkPost(String postId) throws Exception {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if(optionalPost.isEmpty()) {
+            throw new PostNotFoundException("There is no such postId " + postId);
+        }
+        return optionalPost.get();
+    }
 }

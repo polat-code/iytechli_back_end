@@ -5,6 +5,7 @@ import com.example.iytechli.user.domain.entity.ProfileStatus;
 import com.example.iytechli.user.domain.entity.UniversityRole;
 import com.example.iytechli.user.domain.entity.User;
 import com.example.iytechli.user.domain.http.GetUserDetailResponse;
+import com.example.iytechli.user.domain.http.GetUserInfoByEmail;
 import com.example.iytechli.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -65,5 +66,22 @@ public class UserService {
             throw new UsernameNotFoundException("There is no such a userId " + userId);
         }
         return optionalUser;
+    }
+
+    public ResponseEntity<ApiResponse<GetUserInfoByEmail>> getUserDetaiLByEmail(
+            String email) throws Exception
+    {
+        Optional<User> optionalUser = userRepository.findByAlreadyEmail(email);
+        if(optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no such a email " + email);
+        }
+        GetUserInfoByEmail getUserInfoByEmail = GetUserInfoByEmail
+                .builder()
+                .userId(optionalUser.get().getId())
+                .name(optionalUser.get().getName())
+                .surname(optionalUser.get().getSurname())
+                .build();
+
+        return new ResponseEntity<>(new ApiResponse<>(getUserInfoByEmail, "Successfull",200,true,new Date()),HttpStatus.OK);
     }
 }
