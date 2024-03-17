@@ -22,4 +22,5 @@ public class PostDetailResponse {
     private int numberOfLikes;
     private boolean isCurrentUserLikePost;
     private Date createdAt;
+    private List<PostDetailUserLikes> postDetailUserLikes;
 }

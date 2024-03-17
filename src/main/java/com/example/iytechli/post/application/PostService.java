@@ -150,6 +150,9 @@ public class PostService {
                 .numberOfComments(post.getComments().size())
                 .numberOfLikes(post.getLikes().size())
                 .createdAt(post.getCreatedAt())
+                .postDetailUserLikes(post.getLikes().stream().map(
+                        (userLike) -> new PostDetailUserLikes(userLike.getId(),userLike.getName(),userLike.getSurname()))
+                        .collect(Collectors.toList()))
                 .build();
 
         return new ResponseEntity<>(new ApiResponse<>(postDetailResponse,"succesfull",200,true,new Date()),HttpStatus.OK);
