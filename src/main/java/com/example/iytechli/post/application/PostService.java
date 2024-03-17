@@ -137,4 +137,21 @@ public class PostService {
         }
         return optionalPost.get();
     }
+
+    public ResponseEntity<ApiResponse<PostDetailResponse>> getPostDetailByPostId(String postId,String userId ) throws Exception{
+        User user = checkUser(userId);
+        Post post = checkPost(postId);
+
+        PostDetailResponse postDetailResponse = PostDetailResponse.builder()
+                .postId(post.getId())
+                .content(post.getContent())
+                .isCurrentUserLikePost(post.getLikes().contains(user))
+                .photoList(post.getPhotos())
+                .numberOfComments(post.getComments().size())
+                .numberOfLikes(post.getLikes().size())
+                .createdAt(post.getCreatedAt())
+                .build();
+
+        return new ResponseEntity<>(new ApiResponse<>(postDetailResponse,"succesfull",200,true,new Date()),HttpStatus.OK);
+    }
 }

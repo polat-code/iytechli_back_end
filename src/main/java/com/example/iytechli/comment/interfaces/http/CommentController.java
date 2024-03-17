@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comment")
+@CrossOrigin("http://localhost:3000")
 public class CommentController {
 
     private final CommentService commentService;
@@ -22,7 +23,7 @@ public class CommentController {
         return commentService.createComment(createCommentRequest);
     }
 
-    @GetMapping("/all")
+    @PostMapping("/all")
     public ResponseEntity<ApiResponse<List<AllCommentsByPostResponse>>> getAllCommentsByPost(@RequestBody AllCommentsByPostRequest allCommentsByPostRequest) throws Exception {
         return commentService.getAllCommentsByPost(allCommentsByPostRequest);
     }

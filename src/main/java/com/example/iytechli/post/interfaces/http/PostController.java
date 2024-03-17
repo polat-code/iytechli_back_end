@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,5 +33,11 @@ public class PostController {
     @PostMapping("/like")
     public ResponseEntity<ApiResponse<String>> likePost(@RequestBody LikePostRequest likePostRequest)  throws Exception{
         return postService.likePost(likePostRequest);
+    }
+
+    @GetMapping("/post-detail/{postId}/{userId}")
+    public ResponseEntity<ApiResponse<PostDetailResponse>> getPostDetailByPostId(@PathVariable("postId") String postId,
+                                                                                 @PathVariable("userId") String userId) throws Exception {
+        return postService.getPostDetailByPostId(postId,userId);
     }
 }
