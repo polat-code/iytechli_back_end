@@ -12,18 +12,13 @@ application:
 spring:
   data:
     mongodb:
-      authentication-database: admin
-      username: admin
-      password: password
+      uri: mongodb+srv://ozgurhanp:H3la79RrIc8zWcSl@cluster0.bl0ojz4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       database: iytechli
-      port: 27017
-      host: localhost
-
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
-    username: ozgurhan.45@gmail.com
-    password: "yifg aiph xfma ctow"
+    username: iytechli.email@gmail.com
+    password: "sejm pyqs ukdh accj"
     port: 587
     protocol: smtp
     test-connection: false
