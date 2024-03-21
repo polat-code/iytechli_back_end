@@ -55,9 +55,10 @@ public class AuthService {
             universityRole = UniversityRole.EMPLOYEE;
         }
 
+
         User user = User.builder()
-                .name(registerRequest.getName())
-                .surname(registerRequest.getSurname())
+                .name(capitalizeFirstLetter(registerRequest.getName()))
+                .surname(capitalizeFirstLetter(registerRequest.getSurname()))
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .createdAt(new Date())
@@ -83,6 +84,12 @@ public class AuthService {
         log.info("Email is sent to " + registerRequest.getEmail());
 
         return new ResponseEntity<>(new ApiResponse<>(registerResponse,"successfully registered",200,true,new Date()), HttpStatus.OK);
+    }
+    public String capitalizeFirstLetter(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        return Character.toUpperCase(input.charAt(0)) + input.substring(1).trim();
     }
 
     private void checkEmail(String email) throws Exception {

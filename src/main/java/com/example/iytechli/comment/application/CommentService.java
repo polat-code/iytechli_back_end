@@ -99,9 +99,9 @@ public class CommentService {
                 .numberOfLikes(comment.getLikes().size())
                 .numberOfDislikes(comment.getDislikes().size())
                 .isCreatedAt(comment.getIsCreatedAt())
-                .commentOwnerName(user.getName())
-                .commentOwnerSurname(user.getSurname())
-                .commentOwnerUserId(user.getId())
+                .commentOwnerName(comment.getUser().getName())
+                .commentOwnerSurname(comment.getUser().getSurname())
+                .commentOwnerUserId(comment.getUser().getId())
                 .build();
     }
 
