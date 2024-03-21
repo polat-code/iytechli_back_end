@@ -15,6 +15,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/message")
+//@CrossOrigin("http://localhost:3000")
+@CrossOrigin("thawing-boar-fynrgkl61w2eug9dcgolkj2f.herokudns.com")
 public class MessageController {
 
     private final MessageService messageService;
