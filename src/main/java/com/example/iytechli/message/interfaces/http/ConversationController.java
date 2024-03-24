@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/conversation")
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("thawing-boar-fynrgkl61w2eug9dcgolkj2f.herokudns.com")
+@CrossOrigin("https://iytechli-front-end-v1-jrwvnwbzh-ozgurhan-polats-projects.vercel.app")
 public class ConversationController {
 
     private final ConversationService conversationService;

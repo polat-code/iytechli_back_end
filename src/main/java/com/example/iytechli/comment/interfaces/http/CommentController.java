@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comment")
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("https://iytechli-front-end-v1.vercel.app")
+@CrossOrigin("https://iytechli-front-end-v1-jrwvnwbzh-ozgurhan-polats-projects.vercel.app")
 public class CommentController {
 
     private final CommentService commentService;

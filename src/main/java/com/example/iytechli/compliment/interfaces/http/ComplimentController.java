@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/compliment")
 @RequiredArgsConstructor
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("https://iytechli-front-end-v1.vercel.app")
+@CrossOrigin("https://iytechli-front-end-v1-jrwvnwbzh-ozgurhan-polats-projects.vercel.app")
 public class ComplimentController {
 
     private final PostComplimentService postComplimentService;

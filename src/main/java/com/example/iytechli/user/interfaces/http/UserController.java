@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user")
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("https://iytechli-front-end-v1.vercel.app")
+@CrossOrigin("https://iytechli-front-end-v1-jrwvnwbzh-ozgurhan-polats-projects.vercel.app")
 public class UserController {
 
     private final UserService userService;
