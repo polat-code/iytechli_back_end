@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/post")
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("thawing-boar-fynrgkl61w2eug9dcgolkj2f.herokudns.com")
+@CrossOrigin("https://iytechli-front-end-v1.vercel.app")
 public class PostController {
 
     private final PostService postService;

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 //@CrossOrigin("http://localhost:3000")
-@CrossOrigin("thawing-boar-fynrgkl61w2eug9dcgolkj2f.herokudns.com")
+@CrossOrigin("https://iytechli-front-end-v1.vercel.app")
 public class AuthController {
 
     private AuthService authService;
