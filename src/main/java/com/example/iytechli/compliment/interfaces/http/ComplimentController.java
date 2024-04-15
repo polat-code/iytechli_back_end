@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/compliment")
 @RequiredArgsConstructor
-//@CrossOrigin("http://localhost:3000")
-@CrossOrigin("https://iytechli-front-end-v1-jrwvnwbzh-ozgurhan-polats-projects.vercel.app")
+@CrossOrigin("http://localhost:3000")
+
 public class ComplimentController {
 
     private final PostComplimentService postComplimentService;

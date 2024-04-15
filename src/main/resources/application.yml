@@ -12,8 +12,12 @@ application:
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://ozgurhanp:H3la79RrIc8zWcSl@cluster0.bl0ojz4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      authentication-database: admin
+      username: admin
+      password: password
       database: iytechli
+      port: 27017
+      host: localhost
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
